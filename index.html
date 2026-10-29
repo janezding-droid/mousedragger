@@ -27,7 +27,7 @@ function layout(){let isCurve=task.value==='curve';guide.setAttribute('d',isCurv
 function localPoint(e){const r=stage.getBoundingClientRect();return {x:(e.clientX-r.left)*800/r.width,y:(e.clientY-r.top)*400/r.height};}
 function remember(type,e){const p=localPoint(e);events.push({type,t:performance.now(),x:p.x,y:p.y,button:e.button??0,is_dragging:dragging,pointer_type:e.pointerType||'mouse'});trace.setAttribute('points',events.map(a=>`${a.x},${a.y}`).join(' '));}
 function reset(){dragging=false;events=[];trace.setAttribute('points','');status.textContent='準備就緒。從 START 圈內按住並拖曳到 TARGET。';}
-stage.addEventListener('pointerdown',e=>{if(dragging)return;const p=localPoint(e);if(Math.hypot(p.x-start.x,p.y-start.y)>40){status.textContent='請先在 START 圈內按住滑鼠。';return;}dragging=true;stage.setPointerCapture(e.pointerId);remember('pointerdown',e);status.textContent='正在記錄軌跡…';});
+stage.addEventListener('pointerdown',e=>{if(dragging)return;const p=localPoint(e);if(Math.hypot(p.x-start.x,p.y-start.y)>40){status.textContent='請先在 START 圈內按住滑鼠。';return;}events=[];trace.setAttribute('points','');dragging=true;stage.setPointerCapture(e.pointerId);remember('pointerdown',e);status.textContent='正在記錄軌跡…';});
 stage.addEventListener('pointermove',e=>{if(dragging)remember('pointermove',e);});
 stage.addEventListener('pointerup',async e=>{if(!dragging)return;remember('pointerup',e);dragging=false;const last=events[events.length-1];const completed=Math.hypot(last.x-target.x,last.y-target.y)<=45;
 const person=pid.value.trim();if(!person){status.textContent='請填寫參與者代碼。';return;}
