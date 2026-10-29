@@ -1,0 +1,7 @@
+node_modules/
+dist/
+netlify/functions/
+analysis-output/
+*.jsonl
+mouse_context_*.json
+mouse_backup_*.json
