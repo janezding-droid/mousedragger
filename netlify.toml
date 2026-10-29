@@ -1,0 +1,19 @@
+[build]
+  command = "node build.mjs"
+  publish = "dist"
+
+[functions]
+  directory = "netlify/functions"
+  node_bundler = "esbuild"
+
+[[redirects]]
+  from = "/api/record"
+  to = "/.netlify/functions/record"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/api/export"
+  to = "/.netlify/functions/export"
+  status = 200
+  force = true

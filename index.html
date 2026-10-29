@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>滑鼠軌跡研究資料蒐集器</title>
+<style>
+:root{font-family:system-ui,"Segoe UI",sans-serif;color:#1b2430;background:#f5f7fa}body{margin:0}.wrap{max-width:980px;margin:22px auto;padding:0 16px}.panel{background:white;border:1px solid #dce2e8;border-radius:14px;padding:18px;margin:12px 0}h1{font-size:1.5rem;margin:0 0 8px}label{display:block;font-weight:600;margin:10px 0 4px}input,select,button{font:inherit;padding:9px 10px;border:1px solid #c8d0da;border-radius:8px}input,select{max-width:100%;box-sizing:border-box}button{cursor:pointer;background:#1f5ea8;color:white;border:0;margin:8px 6px 0 0}button.secondary{background:#e8edf3;color:#1b2430}button:disabled{opacity:.5;cursor:not-allowed}.row{display:flex;gap:16px;flex-wrap:wrap}.row>div{flex:1;min-width:180px}.stage{position:relative;height:400px;background:#fbfcfe;border:1px solid #cfd7e1;border-radius:12px;overflow:hidden;touch-action:none;user-select:none}.stage svg{width:100%;height:100%;position:absolute;inset:0}.status{padding:10px;background:#eef3f8;border-radius:8px;margin-top:8px;white-space:pre-wrap}.warn{color:#8e3a15}.small{font-size:.92rem;color:#4f5b69}.path{stroke:#8b9aae;stroke-dasharray:6 7;stroke-width:3;fill:none}.target{fill:#d3f4df;stroke:#168348;stroke-width:3}.start{fill:#cfe5ff;stroke:#2368b3;stroke-width:3}
+</style></head>
+<body><div class="wrap">
+<h1>滑鼠軌跡 CAPTCHA 研究資料蒐集器</h1>
+<p id="intro" class="small">本機執行時資料會存成 CSV；正式上線後，經同意送出的資料儲存於 Netlify Blobs。請只填入不含真實姓名、電子郵件、學號等個資的代碼。</p>
+<div class="panel"><div class="row"><div><label for="pid">參與者代碼（勿輸入姓名等個資）</label><input id="pid" value="P001" maxlength="80"></div><div><label for="label">資料標籤</label><select id="label"><option value="human">human：真人親自操作</option><option value="bot">bot：已知自動化來源</option></select></div><div><label for="task">任務</label><select id="task"><option value="line">任務 A：直線拖曳</option><option value="curve">任務 B：曲線拖曳</option></select></div></div>
+<p id="source-notice" class="small warn">本機測試仍須正確標記來源。線上公開蒐集只接受自填的 human 資料，標籤尚未獨立驗證；已知程式資料請透過本機研究流程匯入。</p><label class="small" for="consent" style="font-weight:400"><input id="consent" type="checkbox" style="width:18px;height:18px;vertical-align:middle"> 我已了解本次資料會記錄滑鼠座標、相對時間、任務類型及自填參與者代碼，並同意提交作為研究資料。請勿提供可辨識個人身分的資訊。</label></div>
+<div class="panel"><p><b>操作方式：</b>從左側藍色 START 圈內按住滑鼠，拖曳到右側綠色 TARGET 區域並放開。未完成的嘗試也會記錄。每筆資料是一次任務。</p>
+<div class="stage" id="stage"><svg id="canvas" viewBox="0 0 800 400" preserveAspectRatio="none" aria-label="拖曳任務畫面"><path id="guide" class="path" d="M 70 280 L 730 110"/><circle class="start" cx="70" cy="280" r="27"/><circle class="target" cx="730" cy="110" r="30"/><text x="70" y="330" text-anchor="middle" font-size="15" fill="#1b2430">START</text><text x="730" y="160" text-anchor="middle" font-size="15" fill="#1b2430">TARGET</text><polyline id="trace" points="" fill="none" stroke="#bd4b24" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+<button id="reset" class="secondary">重設任務</button><button id="export" class="secondary">下載目前瀏覽器備份 JSON</button><div id="status" class="status">準備就緒。請確認參與者代碼與標籤後開始。</div></div>
+<div class="panel small">欄位設計包含任務層級的彙總特徵與事件層級的座標／時間紀錄。請記錄瀏覽器版本、任務尺寸與參與者知情同意情況；蒐集前先確認研究倫理與資料使用規範。</div>
+</div>
+<script>
+(()=>{
+const stage=document.getElementById('stage'),svg=document.getElementById('canvas'),guide=document.getElementById('guide'),trace=document.getElementById('trace'),status=document.getElementById('status');
+const pid=document.getElementById('pid'), lab=document.getElementById('label'), task=document.getElementById('task'), consent=document.getElementById('consent');
+const isLocal=['localhost','127.0.0.1'].includes(location.hostname);
+if(!isLocal){lab.value='human';lab.disabled=true;document.getElementById('intro').textContent='線上研究蒐集：經同意提交後，滑鼠軌跡及自填代碼會儲存在 Netlify Blobs。請勿填寫姓名、電子郵件、學號等可辨識資訊。';}
+let events=[],dragging=false,records=[],session='S'+Date.now().toString(36),start={x:70,y:280},target={x:730,y:110};
+function layout(){let isCurve=task.value==='curve';guide.setAttribute('d',isCurve?'M 70 280 Q 400 10 730 110':'M 70 280 L 730 110');}
+function localPoint(e){const r=stage.getBoundingClientRect();return {x:(e.clientX-r.left)*800/r.width,y:(e.clientY-r.top)*400/r.height};}
+function remember(type,e){const p=localPoint(e);events.push({type,t:performance.now(),x:p.x,y:p.y,button:e.button??0,is_dragging:dragging,pointer_type:e.pointerType||'mouse'});trace.setAttribute('points',events.map(a=>`${a.x},${a.y}`).join(' '));}
+function reset(){dragging=false;events=[];trace.setAttribute('points','');status.textContent='準備就緒。從 START 圈內按住並拖曳到 TARGET。';}
+stage.addEventListener('pointerdown',e=>{if(dragging)return;const p=localPoint(e);if(Math.hypot(p.x-start.x,p.y-start.y)>40){status.textContent='請先在 START 圈內按住滑鼠。';return;}dragging=true;stage.setPointerCapture(e.pointerId);remember('pointerdown',e);status.textContent='正在記錄軌跡…';});
+stage.addEventListener('pointermove',e=>{if(dragging)remember('pointermove',e);});
+stage.addEventListener('pointerup',async e=>{if(!dragging)return;remember('pointerup',e);dragging=false;const last=events[events.length-1];const completed=Math.hypot(last.x-target.x,last.y-target.y)<=45;
+const person=pid.value.trim();if(!person){status.textContent='請填寫參與者代碼。';return;}
+if(!/^[A-Za-z0-9_-]{2,40}$/.test(person)){status.textContent='參與者代碼請使用 2～40 字元的英數字、底線或連字號；不要用姓名或學號。';return;}
+if(!consent.checked){status.textContent='若要儲存或提交資料，請先勾選知情同意。';return;}
+const record={participant_id:person,label:isLocal?lab.value:'human',consent:true,task_type:task.value,session_id:session,completed,viewport_width:800,viewport_height:400,pointer_type:e.pointerType||'mouse',target,events:events.slice()};records.push(record);
+try{const response=await fetch('/api/record',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(record)});const result=await response.json();if(!response.ok||!result.ok)throw new Error(result.error||'伺服器拒絕資料');status.textContent=`${result.storage==='netlify_blobs'?'資料已儲存至線上資料庫':'資料已寫入本機 CSV'}。trial_id=${result.trial_id}\n事件數=${result.events}；任務${completed?'到達目標':'未到達目標'}。\n可繼續下一次任務。`;}
+catch(err){status.textContent=`儲存失敗：${err.message}\n此次資料尚未確認寫入。請按「下載目前瀏覽器備份 JSON」立即備份。`;}
+});
+stage.addEventListener('pointercancel',()=>{dragging=false;status.textContent='指標操作已取消；請重設後再試。';});
+task.addEventListener('change',()=>{layout();start=task.value==='curve'?{x:70,y:280}:{x:70,y:280};target={x:730,y:110};reset();});
+document.getElementById('reset').addEventListener('click',reset);
+document.getElementById('export').addEventListener('click',()=>{const blob=new Blob([JSON.stringify(records,null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='mouse_backup_'+Date.now()+'.json';a.click();URL.revokeObjectURL(a.href);});
+layout();
+})();
+</script></body></html>
