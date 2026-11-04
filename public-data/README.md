@@ -76,3 +76,29 @@ python -m http.server 18876 --bind 127.0.0.1 --directory PROJECT/outputs/public-
 第7輪：build_site.py可加 --probe-dir C:/path/to/probe --source C:/path/to/original.gz，會先重讀SHA256一致的原始Avro前綴、驗證全部群組occurrences，再依來源順序選首個2至20筆的一秒群組。候選含合成直線軌跡0至2秒鍵盤時間軸與5筆E5事件參數關聯圖；非因果邊。來源圖不推論攻擊或缺失實體屬性。瀏覽器不解壓原始檔。未傳probe-dir保留基本網站。
 
 本輪TRACE2 .104分片249752242bytes、發布者MD5吻合。前百萬筆877765events為2019-05-13 UTC，早於目標5/14案例；IP localAddress及libselinux.so substring命中不作攻擊標註。詳見專案darpa-run07。固定六指標未因結果增減。
+# Run8: exploratory E5 sensitivity and complete summary profiling
+
+Use the existing pinned `requirements-avro.txt` and `requirements-quality.txt`.
+All outputs must be new clean paths. Commands are relative to the repository:
+
+```powershell
+python public-data/summary_experiment.py sensitivity <official.gz> <new-sensitivity-dir>
+python public-data/summary_experiment.py profile <official.gz> <new-profile-dir>
+python public-data/render_summary.py <sensitivity-dir>/robustness.csv <profile-dir>/performance.csv <new-plot-dir>
+python public-data/locate_time.py <official.gz> <new-index.json> --limit 5000000
+```
+
+Sensitivity fixes seed20261104, source-order half sampling, p=.01 deletion,
+integer +/-1ms timestamp jitter, anchored time x2, and .1/1/10s buckets before
+running this exploratory analysis. System logs have no mouse coordinates;
+coordinate scaling remains in the separate Balabit experiment. Source table
+retains original exact ns and hashes; derived summaries need their manifest to
+reconstruct changed timestamps. Pair retention is conditional on surviving
+occurrences and measures grouping stability only. All attack truth stays unknown.
+Canonical decoded-record dedup is distinct from byte-exact Avro dedup.
+Profiles use1k/10k/30k source records, two fresh worker processes each, full decode,
+compressed source reread, all four original summaries, graph and JSON output.
+Core hashes must agree between repeats. Cache is uncontrolled; no cold-cache or
+large-scale extrapolation claim. Worker memory includes runtime/imports, excludes
+coordinator; no worker subprocess. Time index scans at most5m records twice and
+records Host definitions without deriving attack labels or aligning narrative time.
