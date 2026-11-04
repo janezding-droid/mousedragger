@@ -134,3 +134,9 @@ Full UI/reports, benchmark refitting and independent cold-cache control are out
 of this timing scope. Separate coordinator and two Node process peaks are given;
 plot subprocess and simultaneous process-tree peak are unmeasured. Do not sum
 lifetime process peaks or infer scalability from these three different workloads.
+
+night06 本機案例播放器（不可公開散布衍生座標）：
+
+python public-data/build_local_cases.py ../../outputs/public-data-experiments ../public-data-experiments/raw/balabit ../public-data-experiments/night-quality/NEW-local-player
+
+僅從先前六個train技術案例及既有DARPA五事件群組生成。每次重讀CSV、核對來源SHA256／原始列／路長及降採樣差，拒絕覆寫。以python -m http.server <空閒port> --bind 127.0.0.1 --directory <輸出> 開啟。cases.json含275個衍生座標點，只留本機與授權版本備份，不提交Git或公開候選ZIP。網頁提供六例選擇、原始／降採樣時間軸、播放／暫停／重設及五事件ordinal查詢。DARPA沿用舊來源驗證證據，沒有新增真值；其餘全案例整合仍待。
