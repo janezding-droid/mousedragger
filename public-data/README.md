@@ -102,3 +102,35 @@ Core hashes must agree between repeats. Cache is uncontrolled; no cold-cache or
 large-scale extrapolation claim. Worker memory includes runtime/imports, excludes
 coordinator; no worker subprocess. Time index scans at most5m records twice and
 records Host definitions without deriving attack labels or aligning narrative time.
+
+# Night05: cross-component offline replay
+
+Install the existing two pinned requirements files, then freeze existing local inputs:
+
+```powershell
+python public-data/freeze_replay_config.py public-data/selection.json <raw-balabit> <official-shard.gz> <night03-results.csv> <NEW-config.json>
+python public-data/replay_all.py <config.json> <NEW-output> --scale 4
+python public-data/replay_all.py <config.json> <NEW-profile-output> --profile
+```
+
+The config pins Python/Node/package versions, all selected source sizes/SHA256,
+code and seed. Copying to another machine requires an explicit new path config;
+retain the original evidence config. Download is a separate explicit step using
+download_balabit.py and the recorded official DARPA source; this command never
+accesses the network or test labels and never fits or tunes models.
+
+The profile command runs 10/20/40 sessions paired with 1k/10k/30k Avro records,
+each twice in fresh processes. CSV independent raw checks, quality/robustness,
+plots, Avro decode/four summaries/source reread/graph and website-data.json are
+included. The website data includes previously frozen night03 score rows without
+new evaluation. Deterministic files must match byte-for-byte. Runtime JSON is
+excluded from byte comparison. Original output paths are never overwritten.
+
+Output contains local derived mouse coordinates: retain locally, do not package
+these work directories into a public site. website-data.json includes aggregate
+mouse results and a bounded public-domain E5 incidence graph; all attack truth is
+unknown. This is a website-data artifact, not a tested new UI or final report.
+Full UI/reports, benchmark refitting and independent cold-cache control are out
+of this timing scope. Separate coordinator and two Node process peaks are given;
+plot subprocess and simultaneous process-tree peak are unmeasured. Do not sum
+lifetime process peaks or infer scalability from these three different workloads.
