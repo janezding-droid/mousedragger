@@ -51,3 +51,14 @@ python public-data/audit_cases.py C:/path/to/cases.json C:/path/to/fragments.jso
 ```
 
 profile_pipeline量10/20/40 sessions各兩次，完整包含CSV匯入/特徵、獨立原始列驗證、重複隔離、穩健性與繪圖；不同session數的split及隔離工作量不同，不能推導線性擴充或分類比較。每次是新程序，OS cache未控制，首次不稱cold cache。CSV列出Python validator與兩個Node stage各自OS峰值；沒有量render子程序或整棵程序樹同時峰值，不加總冒稱總記憶體。40 sessions原始列全量快取使validator約845MiB，後續串流改善仍待。案例逐點/時間/來源雜湊/路徑獨立驗證，靜態回放已補，動畫網站仍待。
+
+
+第5輪新增：官方E5真值PDF與bins.md5sum已取得，原分片符合發布者MD5。報告TRACE2案例與本機TRACE3檔名不可直接對齊，CDM hostUUID映射未建立；所有事件仍unknown。5/17 Azazel報告作者稱未建立C2並視描述活動為良性，不得因工具名補正類。2018操作日誌屬E3，不是E5。
+
+```powershell
+python public-data/profile_context.py C:/path/to/shard.gz C:/path/to/NEW-context-profile
+python public-data/audit_context.py C:/path/to/shard.gz C:/path/to/NEW-context --limit 1000000
+python public-data/render_context.py C:/path/to/NEW-context/context.json C:/path/to/figures
+```
+
+profile_context單一命令執行1k/10k/100k records各兩次新程序、第二次來源重讀、輸出hash比對與OS程序峰值/時間。它量context稽核，不是完整摘要建構；cache未控制。audit_context以host+UUID解析同有界範圍內的晚到定義，保留缺漏例、固定六指標大小寫敏感substring匹配及欄位位置/解碼hash。匹配不是真值，零匹配不是良性。100萬筆subject不同UUID676/702有定義，但事件出現次數只有93798/889289，分母不可混淆。缺定義可能在其他分片；不猜因果方向或時間順序。四個新增合成契約測試不算外部攻擊成績。
