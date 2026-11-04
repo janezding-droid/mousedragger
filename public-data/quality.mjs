@@ -42,6 +42,15 @@ export function run(input,output) {
   const started=performance.now();
   const fragments=fs.readFileSync(path.join(input,'fragments.jsonl'),'utf8').trim().split('\n').map(JSON.parse);
   const manifest=JSON.parse(fs.readFileSync(path.join(input,'split-manifest.json'),'utf8'));
+  const sessions=new Map(manifest.sessions.map(s=>[s.session,s]));
+  if(sessions.size!==manifest.sessions.length) throw new Error('Duplicate session in manifest');
+  const previousEnd=new Map(),ids=new Set();
+  for(const f of fragments) {
+    if(sessions.get(f.source)?.split!==f.split) throw new Error('Fragment/session split mismatch');
+    const start=f.source_rows[0],end=f.source_rows.at(-1),id=fragmentId(f);
+    if(ids.has(id)||!Number.isInteger(start)||!Number.isInteger(end)||start>=end||start<=(previousEnd.get(f.source)??0)) throw new Error('Overlapping or invalid source windows');
+    ids.add(id);previousEnd.set(f.source,end);
+  }
   const maps=[new Map(),new Map()];
   for(const f of fragments) {
     f.id=fragmentId(f);f.near_key=nearKey(f.events);
@@ -62,7 +71,7 @@ export function run(input,output) {
     quarantined:[...reasons].map(([id,r])=>({id,reasons:[...r]}))});
   write('leakage-audit.json',{input_fragments:fragments.length,exact_cross_split_groups:cross[0].length,normalized_candidate_cross_split_groups:cross[1].length,
     quarantined_fragments:reasons.size,retained_fragments:kept.length,post_quarantine_cross_split_groups:post,
-    whole_session_integrity:new Set(manifest.sessions.map(s=>s.session)).size===manifest.sessions.length,
+    whole_session_integrity:true,fragment_split_matches_source_session:true,source_row_intervals_disjoint:true,
     overlapping_windows:false,public_test_labels_opened:false,classification_ready:false,
     limitation:'Candidate quarantine is conservative and can merge unrelated clicks. No exhaustive fuzzy-neighbor guarantee; training-only operators. Participant holdout and public test source reuse still unverified.'});
   // Protocol fixed before evaluation: robustness uses development/train only; no reserved sessions.

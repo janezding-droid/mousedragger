@@ -19,6 +19,12 @@ test('quarantine removes every cross-split occurrence and preserves source sessi
     assert.equal(result.quarantined_fragments,2);assert.equal(result.retained_fragments,0);
     assert.deepEqual(result.post_quarantine_cross_split_groups,[0,0]);
     assert.throws(()=>run(input,output));
+    fragments[1].split='train';
+    fs.writeFileSync(path.join(input,'fragments.jsonl'),fragments.map(JSON.stringify).join('\n'));
+    assert.throws(()=>run(input,path.join(root,'bad-split')),/split mismatch/);
+    fragments[1]={...fragments[0]};
+    fs.writeFileSync(path.join(input,'fragments.jsonl'),fragments.map(JSON.stringify).join('\n'));
+    assert.throws(()=>run(input,path.join(root,'overlap')),/Overlapping/);
   } finally {fs.rmSync(root,{recursive:true,force:true});}
 });
 test('near-candidate key is invariant to translation, positive scale and duration, sensitive to bends',()=>{
