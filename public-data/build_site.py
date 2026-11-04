@@ -19,6 +19,18 @@ if a.probe_dir:
     from site_evidence import extract
     if not a.source: raise ValueError('--source required for original Avro reread')
     data['graph']=extract(a.probe_dir,a.source)
+for key,filename,caption in [('darpa_sensitivity','robustness.csv','DARPA摘要敏感度'),('darpa_performance','performance.csv','DARPA完整摘要pipeline效能')]:
+    rr=list(csv.DictReader((o/'darpa-run08'/filename).open(encoding='utf-8-sig')))
+    if key=='darpa_sensitivity':
+        headers=['變體','時間桶秒','事件','摘要項數','配對保留','新增配對']
+        values=[[r['variant'],str(int(r['bucket_ns'])/1e9),r['events'],r['items'],f"{float(r['pair_retention']):.3%}",r['introduced_pairs']] for r in rr]
+        limits='15組固定探索性比較。分組配對保留不是攻擊保留率；真值unknown。衍生資料保留原始事件，不是新獨立樣本。'
+    else:
+        headers=['records','events','重複次序','端到端秒','程序峰值MiB']
+        values=[[r['records'],r['events'],r['repeat'],f"{float(r['end_to_end_seconds']):.3f}",f"{float(r['peak_kib'])/1024:.1f}"] for r in rr]
+        limits='每規模兩次新程序，OS cache未控制。含hash/decode/來源重讀/四摘要/verify/graph/JSON，不含新敏感度去重；不推論未量測規模。'
+    data['views'][key]={'description':caption+'，第8輪已保存輸出，第9輪整合。','limits':limits,'caption':caption,'headers':headers,'rows':values,'evidence':'darpa-run08/'+filename}
+    data['source_hashes']['darpa-run08/'+filename]=hashlib.sha256((o/'darpa-run08'/filename).read_bytes()).hexdigest()
 a.output.mkdir(parents=True);shutil.copyfile(Path(__file__).parent/'site/index.html',a.output/'index.html');(a.output/'data.json').write_text(json.dumps(data,ensure_ascii=False,indent=2),'utf-8')
 print(json.dumps({'files':2,'bytes':sum(x.stat().st_size for x in a.output.iterdir()),'contains_balabit_coordinates':False}))
 
