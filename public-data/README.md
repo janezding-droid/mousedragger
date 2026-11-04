@@ -71,3 +71,8 @@ python -m http.server 18876 --bind 127.0.0.1 --directory PROJECT/outputs/public-
 ```
 
 用瀏覽器開http://127.0.0.1:18876/NEW-site/。報告下載連結預期與網站資料夾同層已有實驗補充報告MD/DOCX/PDF與實驗補充簡報PPTX。三來源分開顯示，ordinal只有1可查，其餘回覆候選未包含，不暗示原始事件不存在。這是本機候選，沒有自動發布。網站不在瀏覽器執行離線來源驗證，完整原gzip的機器追溯仍由avro_probe.py完成。
+
+
+第7輪：build_site.py可加 --probe-dir C:/path/to/probe --source C:/path/to/original.gz，會先重讀SHA256一致的原始Avro前綴、驗證全部群組occurrences，再依來源順序選首個2至20筆的一秒群組。候選含合成直線軌跡0至2秒鍵盤時間軸與5筆E5事件參數關聯圖；非因果邊。來源圖不推論攻擊或缺失實體屬性。瀏覽器不解壓原始檔。未傳probe-dir保留基本網站。
+
+本輪TRACE2 .104分片249752242bytes、發布者MD5吻合。前百萬筆877765events為2019-05-13 UTC，早於目標5/14案例；IP localAddress及libselinux.so substring命中不作攻擊標註。詳見專案darpa-run07。固定六指標未因結果增減。
