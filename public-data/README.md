@@ -62,3 +62,12 @@ python public-data/render_context.py C:/path/to/NEW-context/context.json C:/path
 ```
 
 profile_context單一命令執行1k/10k/100k records各兩次新程序、第二次來源重讀、輸出hash比對與OS程序峰值/時間。它量context稽核，不是完整摘要建構；cache未控制。audit_context以host+UUID解析同有界範圍內的晚到定義，保留缺漏例、固定六指標大小寫敏感substring匹配及欄位位置/解碼hash。匹配不是真值，零匹配不是良性。100萬筆subject不同UUID676/702有定義，但事件出現次數只有93798/889289，分母不可混淆。缺定義可能在其他分片；不猜因果方向或時間順序。四個新增合成契約測試不算外部攻擊成績。
+
+第6輪新增本機證據網站候選，僅打包彙總及官方public-domain E5首筆事件欄位。奈秒以十進位字串提供給瀏覽器，避免JS數值精度流失。保留來源SHA256與ordinal，不包含Balabit座標或官方測試標籤。
+
+```powershell
+python public-data/build_site.py PROJECT/outputs/public-data-experiments PROJECT/outputs/public-data-experiments/NEW-site
+python -m http.server 18876 --bind 127.0.0.1 --directory PROJECT/outputs/public-data-experiments
+```
+
+用瀏覽器開http://127.0.0.1:18876/NEW-site/。報告下載連結預期與網站資料夾同層已有實驗補充報告MD/DOCX/PDF與實驗補充簡報PPTX。三來源分開顯示，ordinal只有1可查，其餘回覆候選未包含，不暗示原始事件不存在。這是本機候選，沒有自動發布。網站不在瀏覽器執行離線來源驗證，完整原gzip的機器追溯仍由avro_probe.py完成。
