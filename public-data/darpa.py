@@ -65,13 +65,25 @@ def summarize(events, bucket_ns=None, mode='argument'):
     return result
 
 
-def verify(summary, events):
+def verify(summary, events, *, mode=None, bucket_ns=None):
+    """Check provenance; supplying mode also enforces the declared partition.
+
+    mode=None retains the legacy membership-only API. Production summary
+    callers supply mode explicitly; absent bucket means exact nanoseconds.
+    """
+    if mode not in (None, 'argument', 'raw', 'byte_exact'):
+        raise ValueError('Unsupported summary mode')
+    if bucket_ns is not None and (type(bucket_ns) is not int or bucket_ns <= 0):
+        raise ValueError('bucket_ns must be a positive integer')
+    if mode != 'argument' and bucket_ns is not None:
+        raise ValueError('bucket_ns requires argument mode')
     # This unlabeled adapter cannot certify a benign/attack label, even when
     # all source references and entity fields still agree.
     assert all(e.get('truth') == 'unknown' for e in events), 'Unsupported source truth'
     by_ref = {e['ref']: e for e in events}
     assert len(by_ref) == len(events), 'Ambiguous source reference'
     used = []
+    group_keys = set()
     for item in summary:
         assert item.get('truth') == 'unknown', 'Unsupported summary truth'
         members = [by_ref[ref] for ref in item['refs']]  # unknown refs fail
@@ -81,6 +93,19 @@ def verify(summary, events):
             assert all(e[key] == item[key] for e in members), 'Mixed entities or event type'
         assert item['min_timestampNanos'] == min(e['timestampNanos'] for e in members)
         assert item['max_timestampNanos'] == max(e['timestampNanos'] for e in members)
+        if mode is not None:
+            def declared_key(e):
+                if mode == 'raw':
+                    return e['ref']
+                if mode == 'byte_exact':
+                    return e['raw_sha256']
+                fields = ('hostId', 'subject', 'predicateObject', 'predicateObject2', 'type')
+                time = e['timestampNanos']
+                return tuple(e[k] for k in fields) + (time if bucket_ns is None else time // bucket_ns,)
+            key = declared_key(members[0])
+            assert all(declared_key(e) == key for e in members), 'Mixed declared partition'
+            assert key not in group_keys, 'Split declared partition'
+            group_keys.add(key)
         used.extend(item['refs'])
     assert Counter(used) == Counter(by_ref.keys()), 'Lost or duplicated event occurrence'
     return True
@@ -116,7 +141,7 @@ def run(input_file, output):
     verify_source(events, input_file)
     result['source_bytes_verified'] = True
     for name, bucket, mode in [('raw_occurrences', None, 'raw'), ('byte_exact', None, 'byte_exact'), ('exact_argument_time', None, 'argument'), ('bucket_1s', 10**9, 'argument'), ('bucket_10s', 10**10, 'argument')]:
-        summary = summarize(events, bucket, mode); verify(summary, events)
+        summary = summarize(events, bucket, mode); verify(summary, events, mode=mode, bucket_ns=bucket)
         (root / (name + '.json')).write_text(json.dumps(summary, indent=2), encoding='utf-8')
         result['comparisons'].append({'method': name, 'items': len(summary), 'reduction': 1-len(summary)/len(events) if events else None, 'provenance_verified': True, 'attack_retention': None})
     edges = [{'event_ref': e['ref'], 'role': role, 'entity_uuid': e[role], 'hostId': e['hostId']}

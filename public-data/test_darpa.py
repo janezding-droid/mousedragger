@@ -16,6 +16,40 @@ def event(row, time=1520000000000000001):
 
 
 class Contracts(unittest.TestCase):
+    def test_declared_bucket_rejects_cross_boundary_merge(self):
+        events=[event(1,10**9-1),event(2,10**9)]
+        self.assertTrue(verify(summarize(events,10**9),events,mode='argument',bucket_ns=10**9))
+        with self.assertRaisesRegex(AssertionError,'Mixed declared partition'):
+            verify(summarize(events,10**10),events,mode='argument',bucket_ns=10**9)
+
+    def test_declared_bucket_rejects_unnecessary_split(self):
+        events=[event(1,10**9),event(2,10**9+1)]
+        split=summarize(events,mode='raw')
+        with self.assertRaisesRegex(AssertionError,'Split declared partition'):
+            verify(split,events,mode='argument',bucket_ns=10**9)
+
+    def test_declared_exact_time_and_raw_modes(self):
+        events=[event(1,10**9),event(2,10**9+1)]
+        for mode in ('raw','argument','byte_exact'):
+            self.assertTrue(verify(summarize(events,mode=mode),events,mode=mode))
+        with self.assertRaisesRegex(AssertionError,'Mixed declared partition'):
+            verify(summarize(events,10**9),events,mode='argument')
+
+    def test_declared_dedup_partition_rejects_split_and_wrong_hash(self):
+        a=event(1);b=event(2);b['raw_sha256']=a['raw_sha256']
+        events=[a,b]
+        with self.assertRaisesRegex(AssertionError,'Split declared partition'):
+            verify(summarize(events,mode='raw'),events,mode='byte_exact')
+        self.assertTrue(verify(summarize(events,mode='byte_exact'),events,mode='byte_exact'))
+        b['raw_sha256']='different'
+        with self.assertRaisesRegex(AssertionError,'Mixed declared partition'):
+            verify(summarize(events),events,mode='byte_exact')
+
+    def test_declared_partition_options_and_empty_input(self):
+        for mode,bucket in [('unsupported',None),('argument',True),('argument',0),('raw',1),(None,1)]:
+            with self.assertRaises(ValueError):verify([],[],mode=mode,bucket_ns=bucket)
+        self.assertTrue(verify([],[],mode='argument',bucket_ns=1))
+
     def test_summary_cannot_invent_or_drop_truth(self):
         events=[event(1)]; original=summarize(events)
         for truth in ('benign','attack',None):

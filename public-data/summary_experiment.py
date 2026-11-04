@@ -69,7 +69,7 @@ def sensitivity(source, output, limit=10000):
     for bucket in (10**8, 10**9, 10**10):
         original=summarize(events,bucket)
         for variant in VARIANTS:
-            derived=derive(events,variant);groups=summarize(derived,bucket);verify(groups,derived)
+            derived=derive(events,variant);groups=summarize(derived,bucket);verify(groups,derived,mode='argument',bucket_ns=bucket)
             # Original timestamp/hash always stays in the source event table; derived
             # values are reproducible via manifest, never claimed as raw values.
             path=output/f'{variant}-{bucket}.json';write_json(path,groups)
@@ -81,7 +81,7 @@ def sensitivity(source, output, limit=10000):
     # Canonical decoded-record dedup includes UUID and every decoded field.
     # This is deliberately distinct from raw compressed/block bytes.
     dedup_events=[dict(e,raw_sha256=e['decoded_record_sha256']) for e in events]
-    dedup=summarize(dedup_events,mode='byte_exact');verify(dedup,dedup_events)
+    dedup=summarize(dedup_events,mode='byte_exact');verify(dedup,dedup_events,mode='byte_exact')
     write_json(output/'decoded-record-exact.json',dedup)
     write_json(output/'normalized-source-events.json',events)
     write_csv(output/'robustness.csv',rows)

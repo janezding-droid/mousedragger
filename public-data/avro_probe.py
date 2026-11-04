@@ -80,7 +80,7 @@ def run(source, output, limit=10000):
     write=lambda name,data:(output/name).write_text(json.dumps(data,indent=2)+'\n',encoding='utf-8')
     comparisons=[]
     for name,bucket,mode in [('raw',None,'raw'),('argument_exact',None,'argument'),('bucket_1s',10**9,'argument'),('bucket_10s',10**10,'argument')]:
-        summary=summarize(events,bucket,mode);verify(summary,events);write(name+'.json',summary)
+        summary=summarize(events,bucket,mode);verify(summary,events,mode=mode,bucket_ns=bucket);write(name+'.json',summary)
         comparisons.append({'method':name,'items':len(summary),'reduction':1-len(summary)/len(events) if events else None,'source_ordinal_verified':True,'attack_retention':None})
     write('normalized-events.json',events)
     write('incidence-edges.json',[{'event_ref':e['ref'],'role':k,'entity_uuid':e[k],'hostId':e['hostId']} for e in events for k in ('subject','predicateObject','predicateObject2') if e[k] is not None])

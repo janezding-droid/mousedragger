@@ -4,7 +4,7 @@ from avro_probe import verify_avro
 from darpa import verify
 
 def bounded_group(summary,events):
-    verify(summary,events)
+    verify(summary,events,mode='argument',bucket_ns=10**9)
     candidates=[s for s in summary if 2<=s['count']<=20]
     if not candidates: raise ValueError('No bounded multi-occurrence group')
     item=candidates[0] # source insertion order; no label or performance selection
