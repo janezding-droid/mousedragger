@@ -35,7 +35,7 @@ def verify_fragments(result, raw):
     return {'fragments_independently_checked':checked,'checks':'raw rows, endpoints, button, coordinates, seconds-to-ms, independently summed path, absent target/consent','numeric_relative_tolerance':1e-12,'numeric_absolute_tolerance':1e-8}
 
 
-def run(manifest, raw, output, measure=False):
+def run(manifest, raw, output, measure=False, quality=False):
     if output.exists(): raise ValueError('Output must be a new clean directory')
     output.mkdir(parents=True)
     script=Path(__file__).with_name('analyze.mjs')
@@ -43,6 +43,9 @@ def run(manifest, raw, output, measure=False):
     subprocess.run(['node',str(script),str(manifest.resolve()),str(raw.resolve()),str((output/'analysis').resolve())],check=True)
     wall=time.perf_counter()-start
     validation=verify_fragments(output/'analysis',raw)
+    if quality:
+        subprocess.run(['node',str(script.with_name('quality.mjs')),str((output/'analysis').resolve()),str((output/'quality').resolve())],check=True)
+        subprocess.run(['python',str(script.with_name('render_quality.py')),str((output/'quality').resolve())],check=True)
     validation.update(wall_seconds_including_process_start=wall,python=platform.python_version(),machine=platform.platform())
     (output/'independent-validation.json').write_text(json.dumps(validation,indent=2),encoding='utf-8')
     if measure:
@@ -64,5 +67,5 @@ def run(manifest, raw, output, measure=False):
 if __name__=='__main__':
     parser=argparse.ArgumentParser()
     parser.add_argument('manifest',type=Path); parser.add_argument('raw',type=Path); parser.add_argument('output',type=Path)
-    parser.add_argument('--measure',action='store_true'); args=parser.parse_args()
-    run(args.manifest,args.raw,args.output,args.measure)
+    parser.add_argument('--measure',action='store_true'); parser.add_argument('--quality',action='store_true'); args=parser.parse_args()
+    run(args.manifest,args.raw,args.output,args.measure,args.quality)

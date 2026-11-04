@@ -2,7 +2,9 @@
 import copy
 import json
 import unittest
-from darpa import normalize, summarize, verify
+import tempfile
+from pathlib import Path
+from darpa import normalize, summarize, verify, verify_source
 
 
 def event(row, time=1520000000000000001):
@@ -14,6 +16,25 @@ def event(row, time=1520000000000000001):
 
 
 class Contracts(unittest.TestCase):
+    def test_raw_source_tampering_is_detected(self):
+        with tempfile.TemporaryDirectory() as directory:
+            source=Path(directory)/'synthetic.jsonl'
+            body={'datum':{'com.bbn.tc.schema.avro.cdm18.Event':{'uuid':'e','hostId':'h','type':'EVENT_READ','timestampNanos':123}}}
+            raw=json.dumps(body)+'\r\n';source.write_bytes(raw.encode())
+            normalized=normalize(body,source.name,1,raw)
+            self.assertTrue(verify_source([normalized],source))
+            source.write_bytes(raw.replace('EVENT_READ','EVENT_SEND').encode())
+            with self.assertRaises(AssertionError): verify_source([normalized],source)
+
+    def test_byte_dedup_preserves_raw_differences_and_all_occurrences(self):
+        a=event(1); b=copy.deepcopy(a); b.update(ref='synthetic.jsonl:2',source_row=2)
+        c=copy.deepcopy(a); c.update(ref='synthetic.jsonl:3',source_row=3,raw_sha256='different-raw-parameters')
+        events=[a,b,c]
+        self.assertEqual(len(summarize(events,mode='raw')),3)
+        self.assertEqual(len(summarize(events,mode='byte_exact')),2)
+        self.assertEqual(len(summarize(events)),1)
+        self.assertTrue(verify(summarize(events,mode='byte_exact'),events))
+
     def test_nanosecond_integer_precision(self):
         self.assertEqual(event(1)['timestampNanos'],1520000000000000001)
         with self.assertRaises(ValueError): event(1,1.52e18)

@@ -46,12 +46,15 @@ def signature(event, bucket_ns=None):
     return key + ((event['timestampNanos'] // bucket_ns) if bucket_ns else event['timestampNanos'],)
 
 
-def summarize(events, bucket_ns=None):
+def summarize(events, bucket_ns=None, mode='argument'):
+    if mode not in ('argument', 'raw', 'byte_exact'):
+        raise ValueError('Unsupported summary mode')
     if bucket_ns is not None and (type(bucket_ns) is not int or bucket_ns <= 0):
         raise ValueError('bucket_ns must be a positive integer')
     grouped = defaultdict(list)
     for event in events:
-        grouped[signature(event, bucket_ns)].append(event)
+        key = event['ref'] if mode == 'raw' else event['raw_sha256'] if mode == 'byte_exact' else signature(event, bucket_ns)
+        grouped[key].append(event)
     result = []
     for group in grouped.values():
         item = {k: group[0][k] for k in ('hostId', 'subject', 'predicateObject', 'predicateObject2', 'type')}
@@ -79,9 +82,24 @@ def verify(summary, events):
     return True
 
 
+def verify_source(events, input_file):
+    """Verify normalized occurrences against actual source bytes, not stored summaries."""
+    expected = {e['source_row']: e for e in events}
+    assert len(expected) == len(events), 'Duplicate source row'
+    checked = set()
+    with Path(input_file).open(encoding='utf-8', newline='') as stream:
+        for row, line in enumerate(stream, 1):
+            if row in expected:
+                actual = normalize(json.loads(line), Path(input_file).name, row, line)
+                assert actual == expected[row], 'Source event mismatch'
+                checked.add(row)
+    assert checked == set(expected), 'Source rows missing'
+    return True
+
+
 def run(input_file, output):
     events, errors, skipped = [], [], 0
-    with Path(input_file).open(encoding='utf-8') as stream:
+    with Path(input_file).open(encoding='utf-8', newline='') as stream:
         for row, line in enumerate(stream, 1):
             try:
                 event = normalize(json.loads(line), Path(input_file).name, row, line)
@@ -91,8 +109,10 @@ def run(input_file, output):
                 errors.append({'source_row': row, 'reason': str(error)})
     root = Path(output); root.mkdir(parents=True, exist_ok=True)
     result = {'scope': 'CDM18 supplied file only; no attack truth inferred', 'events': len(events), 'non_event_records': skipped, 'errors': errors, 'comparisons': []}
-    for name, bucket in [('exact_argument_time', None), ('bucket_1s', 10**9), ('bucket_10s', 10**10)]:
-        summary = summarize(events, bucket); verify(summary, events)
+    verify_source(events, input_file)
+    result['source_bytes_verified'] = True
+    for name, bucket, mode in [('raw_occurrences', None, 'raw'), ('byte_exact', None, 'byte_exact'), ('exact_argument_time', None, 'argument'), ('bucket_1s', 10**9, 'argument'), ('bucket_10s', 10**10, 'argument')]:
+        summary = summarize(events, bucket, mode); verify(summary, events)
         (root / (name + '.json')).write_text(json.dumps(summary, indent=2), encoding='utf-8')
         result['comparisons'].append({'method': name, 'items': len(summary), 'reduction': 1-len(summary)/len(events) if events else None, 'provenance_verified': True, 'attack_retention': None})
     edges = [{'event_ref': e['ref'], 'role': role, 'entity_uuid': e[role], 'hostId': e['hostId']}

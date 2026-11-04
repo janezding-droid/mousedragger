@@ -35,3 +35,8 @@ test('bad header rejected; no arbitrary free motion wrapped into pointer events'
   assert.throws(()=>convertSession('x,y\n0,1','x'));
   assert.equal(convert(['0,0,NoButton,Move,0,0','1,1,NoButton,Move,1,1']).fragments.length,0);
 });
+
+test('duration rejection categories distinguish zero and overlong source fragments',()=>{
+  assert.equal(convert(['0,0,Left,Pressed,0,0','0,0,Left,Released,1,1']).quality.rejections.zero_duration,1);
+  assert.equal(convert(['0,0,Left,Pressed,0,0','181,181,Left,Released,1,1']).quality.rejections.overlong_duration,1);
+});

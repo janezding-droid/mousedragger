@@ -34,6 +34,8 @@ export function convertSession(text, source) {
       const events = points.map((p, index) => ({ x: p.x, y: p.y, t: (p.record_timestamp_s - start) * 1000,
         type: index === 0 ? 'pointerdown' : index === points.length - 1 ? 'pointerup' : 'pointermove' }));
       try {
+        if (events.at(-1).t === 0) { reject('zero_duration'); active = null; continue; }
+        if (events.at(-1).t > 180000) { reject('overlong_duration'); active = null; continue; }
         const features = extractFeatures(events);
         const { segment_speeds_px_s, accelerations_px_s2, ...metrics } = features.metrics;
         fragments.push({ source, source_rows: points.map(p => p.source_row), source_start_s: start,
