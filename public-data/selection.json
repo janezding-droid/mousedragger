@@ -1,0 +1,326 @@
+{
+  "commit": "d00d6f779254a2a917deeab4a5b7a9e8643bd91e",
+  "rule": "first 4 lexicographic sessions per claimed user; training only; no outcome selection",
+  "files": [
+    {
+      "path": "training_files/user12/session_2144641057",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "d29acc8cf42fa9001fb401fe6d0d7f2615a38ce1",
+      "size": 1349384,
+      "url": "https://api.github.com/repos/balabit/Mouse-Dynamics-Challenge/git/blobs/d29acc8cf42fa9001fb401fe6d0d7f2615a38ce1"
+    },
+    {
+      "path": "training_files/user12/session_5265929106",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "80c655018442735699a2325a67527c12af8a745a",
+      "size": 1443810,
+      "url": "https://api.github.com/repos/balabit/Mouse-Dynamics-Challenge/git/blobs/80c655018442735699a2325a67527c12af8a745a"
+    },
+    {
+      "path": "training_files/user12/session_5815391283",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "90b6f43f6dd12f1c07c3e59e16a51ff62706d726",
+      "size": 2132326,
+      "url": "https://api.github.com/repos/balabit/Mouse-Dynamics-Challenge/git/blobs/90b6f43f6dd12f1c07c3e59e16a51ff62706d726"
+    },
+    {
+      "path": "training_files/user12/session_7409188284",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "ba52d0852edb0fd6df2fd3250d7d0a45394f8817",
+      "size": 1448573,
+      "url": "https://api.github.com/repos/balabit/Mouse-Dynamics-Challenge/git/blobs/ba52d0852edb0fd6df2fd3250d7d0a45394f8817"
+    },
+    {
+      "path": "training_files/user15/session_0205904470",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "6dcd3360b6ce1283632a2dd51e77771c884678c7",
+      "size": 764575,
+      "url": "https://api.github.com/repos/balabit/Mouse-Dynamics-Challenge/git/blobs/6dcd3360b6ce1283632a2dd51e77771c884678c7"
+    },
+    {
+      "path": "training_files/user15/session_1366248436",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "95a95fcaf09c557263b68fce0f13179728f112f1",
+      "size": 1365839,
+      "url": "https://api.github.com/repos/balabit/Mouse-Dynamics-Challenge/git/blobs/95a95fcaf09c557263b68fce0f13179728f112f1"
+    },
+    {
+      "path": "training_files/user15/session_5657866014",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "106b8c91c943e63dee6d02d67e30b003f93db7a7",
+      "size": 756838,
+      "url": "https://api.github.com/repos/balabit/Mouse-Dynamics-Challenge/git/blobs/106b8c91c943e63dee6d02d67e30b003f93db7a7"
+    },
+    {
+      "path": "training_files/user15/session_6715291950",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "7635fded9ed7cd0f19c33a46d799421bb7cbbb57",
+      "size": 1954343,
+      "url": "https://api.github.com/repos/balabit/Mouse-Dynamics-Challenge/git/blobs/7635fded9ed7cd0f19c33a46d799421bb7cbbb57"
+    },
+    {
+      "path": "training_files/user16/session_0735651357",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "dcc00be6421340c0702aa4079a6255dcd67e18a6",
+      "size": 2378260,
+      "url": "https://api.github.com/repos/balabit/Mouse-Dynamics-Challenge/git/blobs/dcc00be6421340c0702aa4079a6255dcd67e18a6"
+    },
+    {
+      "path": "training_files/user16/session_1607878631",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "aae58542cbfd37732a6527a36ef60ae5708f26b8",
+      "size": 1664827,
+      "url": "https://api.github.com/repos/balabit/Mouse-Dynamics-Challenge/git/blobs/aae58542cbfd37732a6527a36ef60ae5708f26b8"
+    },
+    {
+      "path": "training_files/user16/session_1658051584",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "35c4c08dd7264e23f549bbbebe8b4c2e7de1ca78",
+      "size": 1656819,
+      "url": "https://api.github.com/repos/balabit/Mouse-Dynamics-Challenge/git/blobs/35c4c08dd7264e23f549bbbebe8b4c2e7de1ca78"
+    },
+    {
+      "path": "training_files/user16/session_3012944488",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "e6268367020975b6efc501546c2021d5e47eb424",
+      "size": 2005151,
+      "url": "https://api.github.com/repos/balabit/Mouse-Dynamics-Challenge/git/blobs/e6268367020975b6efc501546c2021d5e47eb424"
+    },
+    {
+      "path": "training_files/user20/session_0214655159",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "b72892639515a7195c6125196ae0d9bc98e92e56",
+      "size": 1580701,
+      "url": "https://api.github.com/repos/balabit/Mouse-Dynamics-Challenge/git/blobs/b72892639515a7195c6125196ae0d9bc98e92e56"
+    },
+    {
+      "path": "training_files/user20/session_0764157160",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "eaeb8ec16f0be1af5472078f7ee5ebcec2eac2a5",
+      "size": 2450363,
+      "url": "https://api.github.com/repos/balabit/Mouse-Dynamics-Challenge/git/blobs/eaeb8ec16f0be1af5472078f7ee5ebcec2eac2a5"
+    },
+    {
+      "path": "training_files/user20/session_2372891077",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "5b53f9a88f94b68f5062fae772ce75de1b117ff6",
+      "size": 2524585,
+      "url": "https://api.github.com/repos/balabit/Mouse-Dynamics-Challenge/git/blobs/5b53f9a88f94b68f5062fae772ce75de1b117ff6"
+    },
+    {
+      "path": "training_files/user20/session_3767642011",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "0f40be919c408d24eb76328e4e04d032d46e2550",
+      "size": 1406766,
+      "url": "https://api.github.com/repos/balabit/Mouse-Dynamics-Challenge/git/blobs/0f40be919c408d24eb76328e4e04d032d46e2550"
+    },
+    {
+      "path": "training_files/user21/session_0347800921",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "efad4d15a2012da4eb9f8cee03e1b9ee567cf9a1",
+      "size": 724605,
+      "url": "https://api.github.com/repos/balabit/Mouse-Dynamics-Challenge/git/blobs/efad4d15a2012da4eb9f8cee03e1b9ee567cf9a1"
+    },
+    {
+      "path": "training_files/user21/session_0639882460",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "3bf50f84dda1f2fc639eab397d572f07c8f44bc2",
+      "size": 779831,
+      "url": "https://api.github.com/repos/balabit/Mouse-Dynamics-Challenge/git/blobs/3bf50f84dda1f2fc639eab397d572f07c8f44bc2"
+    },
+    {
+      "path": "training_files/user21/session_5306911480",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "e09f2d78be6260da29154131ef4ec653ba21fa8b",
+      "size": 947924,
+      "url": "https://api.github.com/repos/balabit/Mouse-Dynamics-Challenge/git/blobs/e09f2d78be6260da29154131ef4ec653ba21fa8b"
+    },
+    {
+      "path": "training_files/user21/session_6886360376",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "9a809eb91bdd077797c9be5b783835802d50deb4",
+      "size": 704167,
+      "url": "https://api.github.com/repos/balabit/Mouse-Dynamics-Challenge/git/blobs/9a809eb91bdd077797c9be5b783835802d50deb4"
+    },
+    {
+      "path": "training_files/user23/session_0405064924",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "0b01306698634aea8e89a5d336098cea4e5a969d",
+      "size": 953218,
+      "url": "https://api.github.com/repos/balabit/Mouse-Dynamics-Challenge/git/blobs/0b01306698634aea8e89a5d336098cea4e5a969d"
+    },
+    {
+      "path": "training_files/user23/session_1123244103",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "40e4b3a153085e0549059b072ca232b3dcacf650",
+      "size": 934425,
+      "url": "https://api.github.com/repos/balabit/Mouse-Dynamics-Challenge/git/blobs/40e4b3a153085e0549059b072ca232b3dcacf650"
+    },
+    {
+      "path": "training_files/user23/session_2080551697",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "e77abfe6bccac6916fef91567a034cc7e2c2afa8",
+      "size": 764178,
+      "url": "https://api.github.com/repos/balabit/Mouse-Dynamics-Challenge/git/blobs/e77abfe6bccac6916fef91567a034cc7e2c2afa8"
+    },
+    {
+      "path": "training_files/user23/session_3195683016",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "aab7f999e732a5b3e9420491fa76774ca227f522",
+      "size": 757013,
+      "url": "https://api.github.com/repos/balabit/Mouse-Dynamics-Challenge/git/blobs/aab7f999e732a5b3e9420491fa76774ca227f522"
+    },
+    {
+      "path": "training_files/user29/session_0595774526",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "fba352cf47baf13778fd99a0c2a365c0378192a0",
+      "size": 659700,
+      "url": "https://api.github.com/repos/balabit/Mouse-Dynamics-Challenge/git/blobs/fba352cf47baf13778fd99a0c2a365c0378192a0"
+    },
+    {
+      "path": "training_files/user29/session_2786719181",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "b9571aebfb403d8d0cedc7c28706b84352a6bffb",
+      "size": 602758,
+      "url": "https://api.github.com/repos/balabit/Mouse-Dynamics-Challenge/git/blobs/b9571aebfb403d8d0cedc7c28706b84352a6bffb"
+    },
+    {
+      "path": "training_files/user29/session_3135434116",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "805e9c1ebc97abb428bed07c01486b3694ddf2bb",
+      "size": 687573,
+      "url": "https://api.github.com/repos/balabit/Mouse-Dynamics-Challenge/git/blobs/805e9c1ebc97abb428bed07c01486b3694ddf2bb"
+    },
+    {
+      "path": "training_files/user29/session_3424156599",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "bd6894fa95cfb6170c2c8d5f2f3bec2b13f5e5d5",
+      "size": 1439059,
+      "url": "https://api.github.com/repos/balabit/Mouse-Dynamics-Challenge/git/blobs/bd6894fa95cfb6170c2c8d5f2f3bec2b13f5e5d5"
+    },
+    {
+      "path": "training_files/user35/session_1909471574",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "1f0a754d8bb831baee4ffd2dbe61cc7addd2396c",
+      "size": 1024252,
+      "url": "https://api.github.com/repos/balabit/Mouse-Dynamics-Challenge/git/blobs/1f0a754d8bb831baee4ffd2dbe61cc7addd2396c"
+    },
+    {
+      "path": "training_files/user35/session_3412209090",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "1dbea6b008e92a5a1eec9e921c7e25bb982ef269",
+      "size": 944196,
+      "url": "https://api.github.com/repos/balabit/Mouse-Dynamics-Challenge/git/blobs/1dbea6b008e92a5a1eec9e921c7e25bb982ef269"
+    },
+    {
+      "path": "training_files/user35/session_5394017914",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "14162ed64819cb45321f6bad9ced07cbd23a359b",
+      "size": 749995,
+      "url": "https://api.github.com/repos/balabit/Mouse-Dynamics-Challenge/git/blobs/14162ed64819cb45321f6bad9ced07cbd23a359b"
+    },
+    {
+      "path": "training_files/user35/session_6509784211",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "ab7e79556054bc53d17da897292b6b9b5facb463",
+      "size": 857671,
+      "url": "https://api.github.com/repos/balabit/Mouse-Dynamics-Challenge/git/blobs/ab7e79556054bc53d17da897292b6b9b5facb463"
+    },
+    {
+      "path": "training_files/user7/session_0041905381",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "c7ca4bb85925dfd74c6047a000918b754dde18ff",
+      "size": 3668859,
+      "url": "https://api.github.com/repos/balabit/Mouse-Dynamics-Challenge/git/blobs/c7ca4bb85925dfd74c6047a000918b754dde18ff"
+    },
+    {
+      "path": "training_files/user7/session_1060325796",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "181b6399aeddee87150e564f0ff1f1ba263edb05",
+      "size": 1919975,
+      "url": "https://api.github.com/repos/balabit/Mouse-Dynamics-Challenge/git/blobs/181b6399aeddee87150e564f0ff1f1ba263edb05"
+    },
+    {
+      "path": "training_files/user7/session_3320405034",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "729611263160995270234aaa680026cb7e1b528a",
+      "size": 3062206,
+      "url": "https://api.github.com/repos/balabit/Mouse-Dynamics-Challenge/git/blobs/729611263160995270234aaa680026cb7e1b528a"
+    },
+    {
+      "path": "training_files/user7/session_3826583375",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "bba5f01d65a4a00c7ac79783549b93c637550a19",
+      "size": 2607021,
+      "url": "https://api.github.com/repos/balabit/Mouse-Dynamics-Challenge/git/blobs/bba5f01d65a4a00c7ac79783549b93c637550a19"
+    },
+    {
+      "path": "training_files/user9/session_0335985747",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "9b839113693aa36e40dd0a7c4c9f26409c63f611",
+      "size": 2399238,
+      "url": "https://api.github.com/repos/balabit/Mouse-Dynamics-Challenge/git/blobs/9b839113693aa36e40dd0a7c4c9f26409c63f611"
+    },
+    {
+      "path": "training_files/user9/session_3390119815",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "0cfa5b2a50a58b5421b56505ac8ba51ede57c78c",
+      "size": 2561100,
+      "url": "https://api.github.com/repos/balabit/Mouse-Dynamics-Challenge/git/blobs/0cfa5b2a50a58b5421b56505ac8ba51ede57c78c"
+    },
+    {
+      "path": "training_files/user9/session_3879637058",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "650b0c458f044ed3f5a2fe5d380375cbc516d82e",
+      "size": 3214160,
+      "url": "https://api.github.com/repos/balabit/Mouse-Dynamics-Challenge/git/blobs/650b0c458f044ed3f5a2fe5d380375cbc516d82e"
+    },
+    {
+      "path": "training_files/user9/session_4373781904",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "c7c2ce163a6cb0dc248c1ebae5e3e6a92867450e",
+      "size": 2509144,
+      "url": "https://api.github.com/repos/balabit/Mouse-Dynamics-Challenge/git/blobs/c7c2ce163a6cb0dc248c1ebae5e3e6a92867450e"
+    }
+  ]
+}
