@@ -1,7 +1,12 @@
 """Synthetic adapter contracts; external evidence is recorded separately."""
 import copy
+import gzip
+import hashlib
+from pathlib import Path
+import tempfile
 import unittest
-from avro_probe import identity, normalize
+import fastavro
+from avro_probe import identity, normalize, selected, verify_avro
 from darpa import summarize, verify
 
 
@@ -10,6 +15,22 @@ def record():
 
 
 class Adapter(unittest.TestCase):
+    def test_compressed_source_reread_rejects_omission(self):
+        ns='com.bbn.tc.schema.avro.cdm20'
+        fields=[{'name':'uuid','type':{'type':'fixed','name':'UUID','size':16}}, {'name':'subject','type':['null','UUID']}, {'name':'predicateObject','type':['null','UUID']}, {'name':'predicateObject2','type':['null','UUID']}, {'name':'type','type':'string'}, {'name':'timestampNanos','type':'long'}]
+        schema={'type':'record','name':'TCCDMDatum','namespace':ns,'fields':[{'name':'datum','type':[{'type':'record','name':'Event','fields':fields}]},{'name':'hostId','type':'UUID'}]}
+        r=record();r['datum']=(r['datum'][0],{**r['datum'][1],'subject':b's'*16})
+        with tempfile.TemporaryDirectory() as directory:
+            p=Path(directory)/'synthetic.gz'
+            with gzip.open(p,'wb') as f:fastavro.writer(f,schema,[r,r])
+            sha=hashlib.sha256(p.read_bytes()).hexdigest()
+            events=[normalize(r,i,p.name,sha) for i,r in selected(p,10)]
+            self.assertTrue(verify_avro(events,p,10,sha))
+            with self.assertRaises(AssertionError):verify_avro(events[1:],p,10,sha)
+            changed=copy.deepcopy(events);changed[0]['hostId']='invented'
+            with self.assertRaises(AssertionError):verify_avro(changed,p,10,sha)
+            with self.assertRaises(AssertionError):verify_avro(events,p,10,'wrong-sha')
+
     def test_fixed_uuid_union_and_host_scope(self):
         e=normalize(record(),1,'synthetic.gz','test-sha')
         self.assertEqual(e['subject'],'cdm20-fixed16:'+ (b's'*16).hex())
