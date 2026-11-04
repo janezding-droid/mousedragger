@@ -72,7 +72,7 @@ def run(fragments, manifest_path, output):
         return np.array(x),rows,np.array([r['positive'] for r in rows])
     tx,tr,ty=pairs('train'); vx,vr,vy=pairs('validation')
     configs={'full':FEATURES,**{f'only_{k}':v for k,v in GROUPS.items()},**{f'without_{k}':[x for x in FEATURES if x not in v] for k,v in GROUPS.items()}}
-    models=[]
+    models=[]; fitted=[]; validation_predictions=[]
     for config,fields in configs.items():
         indices=[FEATURES.index(k) for k in fields]
         design=np.column_stack([np.ones(len(tx)),tx[:,indices]]); penalty=np.eye(design.shape[1]);penalty[0,0]=0
@@ -81,6 +81,8 @@ def run(fragments, manifest_path, output):
             def score(x,method=method,indices=indices,beta=beta):
                 return np.mean(x[:,indices]**2,axis=1) if method=='distance' else np.column_stack([np.ones(len(x)),x[:,indices]])@beta
             threshold=float(max(score(vx)[vy==0]));models.append((config,method,score,threshold))
+            fitted.append(dict(config=config,method=method,features=fields,threshold=threshold,ridge_beta=beta.tolist() if method=='ridge' else None))
+            for r,v in zip(vr,score(vx)): validation_predictions.append(dict(**r,config=config,method=method,score=float(v),threshold=threshold))
     # Reserved feature values are first transformed/scored after every model and threshold is frozen.
     rx,rr,ry=pairs('reserved'); predictions=[]; results=[]; intervals=[]
     rng=np.random.default_rng(20261104); draws=rng.integers(0,len(users),size=(2000,len(users)))
@@ -95,9 +97,11 @@ def run(fragments, manifest_path, output):
     output.mkdir(parents=True)
     write_csv(output/'benchmark-results.csv',[r for r in results if r['config']=='full']);write_csv(output/'ablation-results.csv',results)
     write_csv(output/'predictions.csv',predictions); write_csv(output/'uncertainty.csv',intervals)
+    write_csv(output/'validation-predictions.csv',validation_predictions)
+    (output/'fitted-models.json').write_text(json.dumps(dict(feature_order=FEATURES,imputation=impute.tolist(),center=center.tolist(),scale=scale.tolist(),prototypes={u:v.tolist() for u,v in prototype.items()},models=fitted),indent=2),encoding='utf-8')
     write_csv(output/'session-features.csv',[dict(session=s['session'],user=s['user'],split=s['split'],fragments=s['n'],**dict(zip(FEATURES,s['values'])),missing_feature_values=sum(s['missing'])) for s in sessions])
     meta=dict(task='constructed_known_owner_proxy_NOT_official_impersonation',users=users,excluded_holdout=sorted(HOLDOUT),source_sessions=len(sessions),features=FEATURES,seed=20261104,numpy=np.__version__,python=platform.python_version(),official_test_opened=False,
-              source_hashes={p.name:hashlib.sha256(p.read_bytes()).hexdigest() for p in (fragments,manifest_path,Path(__file__).with_name('benchmark-protocol-v3.md'))},
+              source_hashes={p.name:hashlib.sha256(p.read_bytes()).hexdigest() for p in (fragments,manifest_path,Path(__file__).with_name('benchmark-protocol-v3.md'),Path(__file__))},
               limitations=['7 genuine validation sessions cannot calibrate 5% FPR','only 7 source clusters; claimed account and training uncertainty not covered','training genuine prototypes include themselves','conservative quarantine changes population','not unseen-user generalization or official attack scores'])
     (output/'run-metadata.json').write_text(json.dumps(meta,ensure_ascii=False,indent=2),encoding='utf-8')
     print(json.dumps({'sessions':len(sessions),'users':len(users),'models':len(models),'result_rows':len(results)}))
