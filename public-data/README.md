@@ -38,3 +38,16 @@ python public-data/render_benchmark.py C:/path/to/benchmark-output
 ```
 
 使用 requirements-quality.txt 的 numpy 2.5.3。這是7位已知合法來源使用者的建構配對身分不符代理，不是官方冒用或bot標籤；user35/user7/user9完全排除。全量／三組only／三組leave-one-out、距離與ridge線性方法均報，未按保留集選模型。固定validation genuine最大閾值，7個genuine無法校準5%誤報；使用者bootstrap不涵蓋claimed端或training不確定性。正式test／public labels仍未開啟。本輪先前「分類關閉」描述指官方冒用任務；代理任務另見 benchmark-protocol-v3.md。輸出predictions含來源session及claimed user，模型輸入與缺值量見session-features。
+
+
+第4輪新增（以下狀態取代前文歷史快照）：官方 E5 TRACE 42,992,814-byte 終端分片已取得。內嵌 CDM20 Avro schema，不是 CDM18 JSON；前10,000 records含8,813 events。只有可讀性與摘要探索，未取得E5攻擊真值、未確認完整主機/時間背景，attack_retention=null。不同資料集不混算。固定16-byte UUID以hex保留；hostId取CDM20外層；奈秒整數不轉float。來源定位為整個壓縮檔SHA256+Avro record ordinal，另保存完整解碼紀錄canonical hash，不能當raw byte dedup。原始檔不提交Git，不執行任何事件內命令。
+
+```powershell
+python -m pip install -r public-data/requirements-avro.txt
+python public-data/avro_probe.py C:/path/to/ta1-trace-3-e5-official-1.bin.178.gz C:/path/to/NEW-avro-output --limit 10000
+python public-data/render_avro_probe.py C:/path/to/avro-output C:/path/to/plot-output
+python public-data/profile_pipeline.py public-data/selection.json C:/path/to/raw/balabit C:/path/to/NEW-profile-output
+python public-data/audit_cases.py C:/path/to/cases.json C:/path/to/fragments.jsonl C:/path/to/raw/balabit C:/path/to/NEW-case-output
+```
+
+profile_pipeline量10/20/40 sessions各兩次，完整包含CSV匯入/特徵、獨立原始列驗證、重複隔離、穩健性與繪圖；不同session數的split及隔離工作量不同，不能推導線性擴充或分類比較。每次是新程序，OS cache未控制，首次不稱cold cache。CSV列出Python validator與兩個Node stage各自OS峰值；沒有量render子程序或整棵程序樹同時峰值，不加總冒稱總記憶體。40 sessions原始列全量快取使validator約845MiB，後續串流改善仍待。案例逐點/時間/來源雜湊/路徑獨立驗證，靜態回放已補，動畫網站仍待。
