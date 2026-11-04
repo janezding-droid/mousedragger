@@ -16,6 +16,20 @@ def event(row, time=1520000000000000001):
 
 
 class Contracts(unittest.TestCase):
+    def test_summary_cannot_invent_or_drop_truth(self):
+        events=[event(1)]; original=summarize(events)
+        for truth in ('benign','attack',None):
+            changed=copy.deepcopy(original);changed[0]['truth']=truth
+            with self.assertRaisesRegex(AssertionError,'summary truth'):verify(changed,events)
+        changed=copy.deepcopy(original);del changed[0]['truth']
+        with self.assertRaisesRegex(AssertionError,'summary truth'):verify(changed,events)
+
+    def test_unlabeled_adapter_rejects_labeled_source(self):
+        events=[event(1)]; summary=summarize(events)
+        for truth in ('benign','attack',None):
+            changed=copy.deepcopy(events);changed[0]['truth']=truth
+            with self.assertRaisesRegex(AssertionError,'source truth'):verify(summary,changed)
+
     def test_raw_source_tampering_is_detected(self):
         with tempfile.TemporaryDirectory() as directory:
             source=Path(directory)/'synthetic.jsonl'

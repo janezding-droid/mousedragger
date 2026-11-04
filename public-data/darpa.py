@@ -66,10 +66,14 @@ def summarize(events, bucket_ns=None, mode='argument'):
 
 
 def verify(summary, events):
+    # This unlabeled adapter cannot certify a benign/attack label, even when
+    # all source references and entity fields still agree.
+    assert all(e.get('truth') == 'unknown' for e in events), 'Unsupported source truth'
     by_ref = {e['ref']: e for e in events}
     assert len(by_ref) == len(events), 'Ambiguous source reference'
     used = []
     for item in summary:
+        assert item.get('truth') == 'unknown', 'Unsupported summary truth'
         members = [by_ref[ref] for ref in item['refs']]  # unknown refs fail
         assert members and len(members) == item['count']
         assert item['event_ids'] == [e['uuid'] for e in members]
