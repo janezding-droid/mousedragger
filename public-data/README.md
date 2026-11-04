@@ -28,3 +28,13 @@ DARPA 尚無可用原始事件或攻擊 PDF；第2輪取得官方操作日誌，
 
 
 --quality 產出 split-manifest.json、leakage-audit.json、per-session feature-distributions.csv、robustness-results.csv/JSON、cases.json/MD 與 PNG/SVG 圖。首尾保留的下採樣、縮放、5ms單調時間抖動、5%內部缺失及pause/時長敏感度只用隔離後train。圖同列session中位數的中位數與最大配對絕對差，避免中位數零值掩蓋尾端變化。案例只有來源ID及度量，完整回放仍待整合；不是分類成功／失敗。
+
+
+第3輪代理任務（v3協議先於保留集評估固定）：
+
+```powershell
+python public-data/benchmark.py C:/path/to/analysis/fragments.jsonl C:/path/to/quality/split-manifest.json C:/path/to/NEW-benchmark-output
+python public-data/render_benchmark.py C:/path/to/benchmark-output
+```
+
+使用 requirements-quality.txt 的 numpy 2.5.3。這是7位已知合法來源使用者的建構配對身分不符代理，不是官方冒用或bot標籤；user35/user7/user9完全排除。全量／三組only／三組leave-one-out、距離與ridge線性方法均報，未按保留集選模型。固定validation genuine最大閾值，7個genuine無法校準5%誤報；使用者bootstrap不涵蓋claimed端或training不確定性。正式test／public labels仍未開啟。本輪先前「分類關閉」描述指官方冒用任務；代理任務另見 benchmark-protocol-v3.md。輸出predictions含來源session及claimed user，模型輸入與缺值量見session-features。
